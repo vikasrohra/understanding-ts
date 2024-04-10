@@ -1,16 +1,20 @@
-const person2 : {
-    name: string,
-    age: number,
-    hobbies: string[],
-    role: [number, string]
-} = {
+// by default enum numbering starts from 0
+enum Role {
+    ADMIN,
+    READ_ONLY,
+    AUTHOR
+}
+
+const person2 = {
     name: "Vikas",
     age: 30,
     hobbies: ["Sports", "Cooking"],
-    role: [2, 'auther'] // Tuple with number and string
+    role: Role.ADMIN
 }
 
-console.log(person2.name);
+if(person2.role === Role.ADMIN) {
+    console.log("is author");
+}
 
 // Array that can only have string elements
 let favActivities: string[];
