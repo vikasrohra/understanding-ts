@@ -8,4 +8,8 @@ function printResult(num: number) {
 
 printResult(add(5, 6));
 
-console.log(printResult(add(5, 6)));
+let combinedValues: (a: number, b: number) => number;
+
+combinedValues = add;
+
+console.log(combinedValues(5, 5));
