@@ -1,24 +1,16 @@
-
-// Not recommended
-const person : {
+const person2 : {
     name: string,
-    age: number
+    age: number,
+    hobbies: string[],
+    role: [number, string]
 } = {
     name: "Vikas",
-    age: 30
-}
-
-console.log(person.name);
-
-
-// Recommended
-const person2 = {
-    name: "Vikas",
-    age: 30
+    age: 30,
+    hobbies: ["Sports", "Cooking"],
+    role: [2, 'auther'] // Tuple with number and string
 }
 
 console.log(person2.name);
-
 
 // Array that can only have string elements
 let favActivities: string[];
