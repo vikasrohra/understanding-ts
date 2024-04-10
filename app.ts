@@ -1,8 +1,9 @@
-function addAndHandle(n1: number, n2: number, cb: (num: number) => void) {
-    const result = n1 + n2;
-    cb(result);
-}
+let userInput: unknown;
+userInput = 5;
+userInput = 'Max';
 
-addAndHandle(10, 20, (res) => {
-    console.log(res);
-});
+let userName: string;
+
+if(typeof userInput === "string") {
+    userName = userInput;
+}
