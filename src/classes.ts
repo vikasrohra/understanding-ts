@@ -5,11 +5,15 @@ class Department { // As per the convension, first letter of class should be in 
         this.name = n;
     }
 
-    describe () { // For constructor functions, no need to use const/let or function keywords
+    describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
         console.log("Department: " + this.name);
     }
 }
 
 const accounting = new Department("Accounting");
 
-console.log(accounting.describe());
+accounting.describe();
+
+const accountingCopy = {name: "Dummy", describe: accounting.describe};
+
+accountingCopy.describe();
