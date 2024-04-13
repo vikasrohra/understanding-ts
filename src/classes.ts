@@ -22,17 +22,46 @@ class Department { // As per the convension, first letter of class should be in 
     }
 }
 
-const accounting = new Department("D1", "Accounting");
+class ITDepartment extends Department {
+    admins: string[];
+        constructor(id: string, admins: string[]) {
+        super(id, "IT");
+        this.admins = admins;
+    }
+}
 
-accounting.describe();
+class AccountingDepartment extends Department {
+    constructor(id: string, private reports: string[]) {
+        super(id, "Accounting");
+    }
 
-accounting.addEmployee("Max");
-accounting.addEmployee("Manu");
+    addReport(text: string) {
+        this.reports.push(text);
+    }
 
-// accounting.employees[2] = "Anna"; // Not recommended, hence we should make class variables private so that they can be accessible only within the class
+    getReports() {
+        console.log(this.reports);
+    }
+}
 
-accounting.printEmployeeInformation();
+const it = new ITDepartment("d1", ['Max']);
 
-// const accountingCopy = {name: "Dummy", describe: accounting.describe};
+it.describe();
 
-// accountingCopy.describe();
+it.addEmployee("Max");
+it.addEmployee("Manu");
+
+// it.employees[2] = "Anna"; // Not recommended, hence we should make class variables private so that they can be accessible only within the class
+
+it.printEmployeeInformation();
+
+console.log(it);
+
+const accounting = new AccountingDepartment('d2', []);
+
+accounting.addReport("Something went wrong...");
+accounting.getReports();
+
+// const itCopy = {name: "Dummy", describe: it.describe};
+
+// itCopy.describe();
