@@ -2,10 +2,16 @@ class Department { // As per the convension, first letter of class should be in 
     // private readonly id: string;
     // name: string; // Property/field/variable, let/var/const is not required
     protected employees: string[] = [];
+    static fiscalYear = 2020;
 
     constructor (private readonly id: string, public name: string) { // For constructor functions, no need to use const/let or function keywords
         // this.id = id;
         // this.name = name;
+        console.log(Department.fiscalYear); // cannot be accessed like this.fiscalYear
+    }
+
+    static createEmployee(name: string) {
+        return {name: name};
     }
 
     describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
@@ -24,7 +30,7 @@ class Department { // As per the convension, first letter of class should be in 
 
 class ITDepartment extends Department {
     admins: string[];
-        constructor(id: string, admins: string[]) {
+    constructor(id: string, admins: string[]) {
         super(id, "IT");
         this.admins = admins;
     }
@@ -70,6 +76,9 @@ class AccountingDepartment extends Department {
         console.log(this.reports);
     }
 }
+
+const employee1 = Department.createEmployee("Test Employee");
+console.log(employee1, Department.fiscalYear);
 
 const it = new ITDepartment("d1", ['Max']);
 
