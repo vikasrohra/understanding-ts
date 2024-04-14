@@ -1,10 +1,10 @@
-class Department { // As per the convension, first letter of class should be in caps
+abstract class Department { // As per the convension, first letter of class should be in caps
     // private readonly id: string;
     // name: string; // Property/field/variable, let/var/const is not required
     protected employees: string[] = [];
     static fiscalYear = 2020;
 
-    constructor (private readonly id: string, public name: string) { // For constructor functions, no need to use const/let or function keywords
+    constructor (protected readonly id: string, public name: string) { // For constructor functions, no need to use const/let or function keywords
         // this.id = id;
         // this.name = name;
         console.log(Department.fiscalYear); // cannot be accessed like this.fiscalYear
@@ -14,11 +14,9 @@ class Department { // As per the convension, first letter of class should be in 
         return {name: name};
     }
 
-    describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
-        console.log(`Department ${this.id}: ${this.name}`);
-    }
+    abstract describe (this: Department): void;
 
-    addEmployee(employee: string) {
+    addEmployee(employee: string) { // For constructor functions, no need to use const/let or function keywords
         this.employees.push(employee);
     }
 
@@ -33,6 +31,10 @@ class ITDepartment extends Department {
     constructor(id: string, admins: string[]) {
         super(id, "IT");
         this.admins = admins;
+    }
+
+    describe() {
+        console.log("Department with ID: " + this.id);
     }
 }
 
@@ -57,6 +59,10 @@ class AccountingDepartment extends Department {
     constructor(id: string, private reports: string[]) {
         super(id, "Accounting");
         this.lastReport = reports[0];
+    }
+
+    describe() {
+        console.log("Department with ID: " + this.id);
     }
 
     addEmployee(employee: string) {
@@ -92,6 +98,7 @@ it.addEmployee("Manu");
 it.printEmployeeInformation();
 
 console.log(it);
+
 
 const accounting = new AccountingDepartment('d2', []);
 accounting.mostRecentReport = "Year End Report";
