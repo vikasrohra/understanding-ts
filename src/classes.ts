@@ -40,6 +40,7 @@ class ITDepartment extends Department {
 
 class AccountingDepartment extends Department {
     private lastReport: string;
+    private static instance: AccountingDepartment;
 
     // get propery, acts as an encapsulation 
     get mostRecentReport() {
@@ -56,9 +57,19 @@ class AccountingDepartment extends Department {
         this.addReport(value);
     }
 
-    constructor(id: string, private reports: string[]) {
+    private constructor(id: string, private reports: string[]) {
         super(id, "Accounting");
         this.lastReport = reports[0];
+    }
+
+    // Function name can be anything
+    // This function will check if we already have an instance of the class and if it has then return that instance, if not, return a new one.
+    static getInstance() {
+        if(this.instance) {
+            return this.instance;
+        }
+        this.instance = new AccountingDepartment('d2', []);
+        return this.instance;
     }
 
     describe() {
@@ -100,7 +111,11 @@ it.printEmployeeInformation();
 console.log(it);
 
 
-const accounting = new AccountingDepartment('d2', []);
+// const accounting = new AccountingDepartment('d2', []);
+const accounting = AccountingDepartment.getInstance();
+const accounting2 = AccountingDepartment.getInstance();
+console.log(accounting, accounting2);
+
 accounting.mostRecentReport = "Year End Report";
 accounting.addReport("Something went wrong...");
 console.log(accounting.mostRecentReport);
