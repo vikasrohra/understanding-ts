@@ -1,0 +1,1 @@
+{"version":3,"file":"optional-chaining.js","sourceRoot":"","sources":["../src/optional-chaining.ts"],"names":[],"mappings":";;AAAA,MAAM,eAAe,GAAG;IACpB,EAAE,EAAE,IAAI;IACR,IAAI,EAAE,OAAO;IACb,GAAG,EAAE,EAAC,KAAK,EAAE,KAAK,EAAE,WAAW,EAAE,gBAAgB,EAAC;CACrD,CAAA;AAED,OAAO,CAAC,GAAG,CAAC,MAAA,eAAe,aAAf,eAAe,uBAAf,eAAe,CAAE,GAAG,0CAAE,KAAK,CAAC,CAAC"}
