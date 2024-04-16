@@ -30,3 +30,28 @@ console.log(mergedObj.age);
 // } & {
 //     age: number;
 // }
+
+
+interface Lengthy {
+    length: number;
+}
+
+function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
+    let descriptionText = "Got no value.";
+    if(element.length === 1) {
+        descriptionText = "Got 1 element.";
+    }
+    else {
+        descriptionText = "Got " + element.length + " elements.";
+    }
+
+    return [element, descriptionText];
+}
+
+console.log(countAndDescribe("Hi there!")); // (2) ['Hi there!', 'Got 9 elements.']
+console.log(countAndDescribe([1, 2, 3])); // (2) [Array(3), 'Got 3 elements.']
+console.log(countAndDescribe([])); // (2) [Array(3), 'Got no value.']
+// console.log(countAndDescribe(2)); // Compile time error, Argument of type 'number' is not assignable to parameter of type 'Lengthy'
+
+// Conslusion: It is a common method for strings, arrays and other types that has length property, not percific to type but a generic method for all the types that have length property
+
