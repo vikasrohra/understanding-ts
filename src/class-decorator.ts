@@ -18,7 +18,8 @@
 // console.log(person);
 
 // Factory function that returns decorator function
-function Logger(logString: string) {    
+function Logger(logString: string) {
+    console.log('Logger Factory');    
     return function(constructor: Function) {
         console.log(logString);
         console.log(constructor);
@@ -27,8 +28,9 @@ function Logger(logString: string) {
 
 function WithTemplate(template: string, hoodId: string) {
     // return function(_: Function) { // Not interested in the constructor and to tell TypeScript that I'm not interested here, I can add an underscore as a name, which basically signals the TS, "Yeah I know I get this argument, but I don't need it"
-
+    console.log('Template Factory');
     return function(constructor: any) {
+        console.log('Template Decorator');
         const hookEle = document.getElementById(hoodId);
         const p = new constructor();
         if(hookEle) {
@@ -39,7 +41,7 @@ function WithTemplate(template: string, hoodId: string) {
     }
 }
 
-// @Logger('Logging - Person') // Here now we have to call the factory function
+@Logger('Logging - Person') // Here now we have to call the factory function
 @WithTemplate('<h1>My Person Object</h1>', 'app')
 class NewPerson {
     name = 'Vikas';
