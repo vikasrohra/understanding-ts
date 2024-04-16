@@ -55,3 +55,10 @@ console.log(countAndDescribe([])); // (2) [Array(3), 'Got no value.']
 
 // Conslusion: It is a common method for strings, arrays and other types that has length property, not percific to type but a generic method for all the types that have length property
 
+
+// "keyof"
+function extractAndConvert<T extends object, U extends keyof T>(obj: T, key: U) {
+    return "Value: " + obj[key];
+}
+
+console.log(extractAndConvert({name: 'Vikas'}, 'name'));
