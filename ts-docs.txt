@@ -1,0 +1,2139 @@
+10/04/2024 
+2. TypeScript Basics and Basic Types
+
+***Using Types***
+- Core Types
+	0. Number (1, 5.3, -10)
+	1. String ('Hi', "Hi", `Hi`)
+	2. Boolean (true, false)
+	3. Object ({age: 30})
+	4. Array ([1, 2, 3])
+	5. Tuple ([1, 2]) => Added by TS: Fixed-length array
+	6. Enum (enum {NEW, OLD}) => Added by TS: Automatically enumerated global constant identifiers
+	7. Any
+	
+	
+***JS Types VS TS Types***
+JS uses "dynamic types" (resolved at runtime), TS uses "static types" (set during development)
+
+
+***Important: Type Casing***
+In TypeScript, you work with types like string or number all the times.
+Important: It is string and number (etc.), NOT String, Number etc.
+The core primitive types in TypeScript are all lowercase!
+
+
+***Type Assignment and Type Inference***
+Specifying type at the time of declaration is suggested, not required or suggested during the initialization as by that value assigned it will assign the type automatically
+let number1: number;
+number1 = 10;
+
+let a: number = 10; X
+let a = 10;
+
+***Object Types***
+// Not recommended
+const person : {
+    name: string,
+    age: number
+} = {
+    name: "Vikas",
+    age: 30
+}
+
+console.log(person.name);
+
+
+// Recommended
+const person2 = {
+    name: "Vikas",
+    age: 30
+}
+
+console.log(person2.name);
+
+
+
+***Nested Objects & Types***
+Of course object types can also be created for nested objects.
+
+Let's say you have this JavaScript object:
+
+const product = {
+  id: 'abc1',
+  price: 12.99,
+  tags: ['great-offer', 'hot-and-new'],
+  details: {
+    title: 'Red Carpet',
+    description: 'A great carpet - almost brand-new!'
+  }
+}
+This would be the type of such an object:
+
+{
+  id: string;
+  price: number;
+  tags: string[];
+  details: {
+    title: string;
+    description: string;
+  }
+}
+So you have an object type in an object type so to say.
+
+
+***Working with Tuples***
+const person2 : {
+    name: string,
+    age: number,
+    hobbies: string[],
+    role: [number, string]
+} = {
+    name: "Vikas",
+    age: 30,
+    hobbies: ["Sports", "Cooking"],
+    role: [2, 'auther'] // Tuple with number and string
+}
+
+-TS inference doesn't work with tuples, hence we have to create the object like above which was not recommended.
+- role: [number, string] is a fixed-length tuple with first element as number and second element as string
+- Though it is a fixed-length tuple, we can still push string/number values as push is exception
+person2.role.push("hi"); // possible
+person2.role.push(1); // possible
+
+person2.role[0] = "hi"; // not possible
+person2.role[1] = 0; // not possible
+
+
+***Working with Enums***
+// by default enum numbering starts from 0
+enum Role {
+    ADMIN,
+    READ_ONLY,
+    AUTHOR
+}
+
+
+// We can change this by assigning a number the first enum, like if we assign ADMIN = 2, then READ_ONLY and AUTHOR automatically becomes 3 and 4 respectifully 
+enum Role {
+    ADMIN = 2,
+    READ_ONLY,
+    AUTHOR
+}
+
+// We can assign different values as well 
+enum Role {
+    ADMIN = 2,
+    READ_ONLY = 99,
+    AUTHOR = 10
+}
+
+// We can assign different types of values as well 
+enum Role {
+    ADMIN = 2,
+    READ_ONLY = "Hello",
+    AUTHOR = true
+}
+
+// Enum name should start with uppercase character
+
+
+***The "any" type***
+
+
+
+***Union Types***
+function combine(input1: number | string, input2: number | string) {
+    let result;
+    if(typeof input1 == "number" && typeof input2 == "number") {
+        result = input1 + input2;
+    }
+    else {
+        result = input1.toString() + input2.toString();
+    }
+    return result;
+}
+
+const combinedAges = combine(30, 26);
+console.log(combinedAges);
+
+const combinedNames = combine("Max", "Anna");
+console.log(combinedNames);
+
+
+***Literal Types***
+- Strictly have to pass as-numner or as-text, no typo is allowed, specially used in conjuction with union types
+function combine(input1: number | string, input2: number | string, resultConversion: "as-number" | "as-text") {
+    let result;
+    if(typeof input1 == "number" && typeof input2 == "number" || resultConversion == "as-number") {
+        result = +input1 + +input2;
+    }
+    else {
+        result = input1.toString() + input2.toString();
+    }
+    return result;
+}
+
+const combinedAges = combine(30, 26, 'as-number');
+console.log(combinedAges);
+
+const combinedStringAges = combine('30', '26', 'as-number');
+console.log(combinedStringAges);
+
+const combinedNames = combine("Max", "Anna", 'as-text');
+console.log(combinedNames);
+
+
+
+***Type Aliases / Custom Types******
+
+type Combinable = number | string;
+type ConversionDescriptor = "as-number" | "as-text";
+
+function combine(input1: Combinable, input2: Combinable, resultConversion: ConversionDescriptor) {
+    let result;
+    if(typeof input1 == "number" && typeof input2 == "number" || resultConversion == "as-number") {
+        result = +input1 + +input2;
+    }
+    else {
+        result = input1.toString() + input2.toString();
+    }
+    return result;
+}
+
+const combinedAges = combine(30, 26, 'as-number');
+console.log(combinedAges);
+
+const combinedStringAges = combine('30', '26', 'as-number');
+console.log(combinedStringAges);
+
+const combinedNames = combine("Max", "Anna", 'as-text');
+console.log(combinedNames);
+
+
+***Type Aliases & Object Types***
+
+Type aliases can be used to "create" your own types. You're not limited to storing union types though - you can also provide an alias to a (possibly complex) object type.
+
+For example:
+
+type User = { name: string; age: number };
+const u1: User = { name: 'Max', age: 30 }; // this works!
+This allows you to avoid unnecessary repetition and manage types centrally.
+
+For example, you can simplify this code:
+
+function greet(user: { name: string; age: number }) {
+  console.log('Hi, I am ' + user.name);
+}
+ 
+function isOlder(user: { name: string; age: number }, checkAge: number) {
+  return checkAge > user.age;
+}
+To:
+
+type User = { name: string; age: number };
+ 
+function greet(user: User) {
+  console.log('Hi, I am ' + user.name);
+}
+ 
+function isOlder(user: User, checkAge: number) {
+  return checkAge > user.age;
+}
+
+
+***Function Return Types and "void"***
+function add(n1: number, n2: number) {
+    return n1 + n2;
+}
+
+function printResult(num: number) {
+    console.log("Result: " + num);
+}
+
+printResult(add(5, 6));
+
+console.log(printResult(add(5, 6)));
+
+// Output:
+// Result: 11
+// undefined
+
+
+***Functions as Types***
+
+function add(n1: number, n2: number) {
+    return n1 + n2;
+}
+
+function printResult(num: number) {
+    console.log("Result: " + num);
+}
+
+printResult(add(5, 6));
+
+let combinedValues: Function;
+
+combinedValues = add;
+combinedValues = printResult;
+
+console.log(combinedValues(5, 5));
+
+// Output:
+// Result: 11
+// Result: 5
+// undefined
+
+
+function add(n1: number, n2: number) {
+    return n1 + n2;
+}
+
+function printResult(num: number) {
+    console.log("Result: " + num);
+}
+
+printResult(add(5, 6));
+
+let combinedValues: (a: number, b: number) => number;
+
+combinedValues = add;
+
+console.log(combinedValues(5, 5));
+
+
+***Function Types and Callbacks***
+function addAndHandle(n1: number, n2: number, cb: (num: number) => void) {
+    const result = n1 + n2;
+    cb(result);
+}
+
+addAndHandle(10, 20, (res) => {
+    console.log(res);
+});
+
+Note: callback functions can return something, even if the argument on which they're passed does NOT expect a returned value.
+
+
+function addAndHandle(n1: number, n2: number, cb: (num: number) => void) {
+    const result = n1 + n2;
+    cb(result);
+}
+
+addAndHandle(10, 20, (res) => {
+    console.log(res);
+    return true;
+});
+
+
+***The "unknown" type***
+
+let userInput: any;
+userInput = 5;
+userInput = 'Max';
+
+
+let userInput: unknown;
+userInput = 5;
+userInput = 'Max';
+
+Above both codes will be compiled by TS, then what is the difference?
+-> Unknown is more strict than any, with any TS has no control
+
+let userInput: unknown;
+userInput = 5;
+userInput = 'Max';
+
+let userName: string;
+
+userName = userInput;
+
+// Not compiled because we are assigning unknown value to a string type 
+
+
+let userInput: any;
+userInput = 5;
+userInput = 'Max';
+
+let userName: string;
+
+userName = userInput;
+
+// Above code works as TS has no control
+
+
+
+let userInput: unknown;
+userInput = 5;
+userInput = 'Max';
+
+let userName: string;
+
+if(typeof userInput === 'string'){
+	userName = userInput;
+}
+
+// This will compile
+
+
+
+
+***The "never" type***
+
+// function generateError(message: string, code: number) {
+//     throw {message: message, errorCode: code};
+// }
+
+// const result = generateError("An error occurred!", 500);
+// console.log(result);
+
+// // Output:
+// // Uncaught: {message: 'An error occurred!', errorCode: 500}
+// // This method will never return, as error is thrown that crashes our script
+// // If you hover over generateError, it shows void because never is newer but if we know it can never return then we can explicitly assign it to never
+
+function generateError(message: string, code: number): never {
+    throw {message: message, errorCode: code};
+    // while(true) {}
+}
+
+const result = generateError("An error occurred!", 500);
+console.log(result);
+
+
+
+
+
+
+
+
+
+11/04/2024
+
+3. The TypeScript Compiler (and its Configuration)
+
+***Using Watch Mode***
+tsc fileName.ts -w
+tsc fileName.ts --watch
+
+
+***Compiling the Entire Project / Multiple Files***
+- For this we need to execute one command for once,
+  tsc --init,
+	- this will create tsconfig.json file
+- Then execute tsc to compile all the files, tsc -w OR tsc --watch to compile and watch all the files
+
+
+***Including & Excluding Files***
+- Not if exclude is not used then by default is not compiled
+- Bt if we write exclude in tsconfig.json, then we explicitely have to write node_modules
+"exclude": [
+    // "*.dev.ts", // Exclude any file that ends with .dev.ts
+    // "**/*.dev.ts", // Any file with this pattern in any folder
+    "node_modules" // Third-party libraries may have ts code in it, hence exclude it, this is by default, excluded from the compilation no need to this explicitely
+  ]	
+
+- Similarly, by default all the TS files will be compiled automatically but if we specify include in tsconfig.json then we have to specify all the TS files indise include to compile
+"include": [
+	"app.ts",
+	"basics.ts"
+]
+
+"files": [
+	"app.ts"
+]
+
+- If we want to compile specific files then we can use files
+
+
+***Setting a Compilation Target***
+es5
+es6
+so on...
+
+***Understanding TypeScript Core Libs***
+"lib": [
+	"dom",
+	"es6",
+	"dom.iterable",
+	"scripthost"
+]
+
+// Unlocks all the DOM apis, the above mentioned is the default one 
+
+
+***More Configuration and Compilation Options***
+allowJS: true
+checkJSL true
+Will compile JS files also
+
+
+***Working with Source Maps***
+- Sorrce map with true value helps in debugging TS files, when we compile our code in the developers tool under source tab we only see JS files, but we source map value is true we can also see TS files and add break points to debug our code
+- It also generates fileName.js.map file in the project directory
+
+
+***rootDir and outDir***
+outDir: "./dist" => will generate js files inside dist (output files)
+rootDir: "./src" => will only compile TS files inside src folder (input files)
+
+
+***Stop Emitting files on Compilation Errors***
+- "noEmitOnError": true, // default is false
+- true, meaning it will not emit any JS file if any of the TS file failed to compile
+- false, meaning it will emit though we have there are compilation errors
+
+
+***Strict Compilation***
+
+
+***Code Quality Options***
+
+***Debugging with Visual Studio Code***
+Chrome debugging in VS Code 
+sourceMap: true
+
+
+
+12/04/2024
+4. Next-generation JavaScript and TypeScript
+
+
+***"let" and "const"***
+Browser specific supported features
+https://compat-table.github.io/compat-table/es6/
+
+***Arrow Functions***
+New Definition
+
+const printOutput: (a: string | number) => void = output => console.log(output);
+
+(a: string | number) => void, tells the function signature
+
+
+***Default Function Parameters***
+const add = (a: number, b: number = 1) => a + b;
+can be called as...
+add(5, 2);
+add(5);
+
+
+***The Spread Object (...)***
+arr.push(1, 2, 3); // is allowed in JS as well as in TS
+OR
+arr.push(...arr2); // is allowed in JS as well as in TS
+OR 
+arr = ['a', ...arr2]; // is allowed in JS as well as in TS
+
+
+***Rest Parameters***
+Convert arguments into an array elements
+
+const add = (...numbers: number[]) => {
+	return numbers.reduce((currResult, currVal) => {
+		return currResult + currVal;
+	}, 0);
+}
+
+add(2, 4, 5.2, 2, 1);
+
+
+***Array and Object Destructuring***
+
+const [hobby1, hobby2, ...remainingHobbies] = hobbiesArr;
+
+const person = {
+	name: "Vikas",
+	age: 30
+}
+
+const [name : userName, age] = person; // alias
+
+
+
+13/04/2024
+5. Classes & Interfaces
+
+***What are Classes and Instances?***
+Classes
+- Classes are "Blueprints for objects"
+- Define how objects look like, which properties and methods they have
+- Classes make creation of multiple, similar objects much easier
+
+Objects
+- The things you work in your code
+- Instances of classes
+- Class-based creation is an alternative to using object literals!
+
+- In simple terms, Class is a skeleton/blueprint (It has properties and methods)
+- Object is basically we create based on the Class blueprint. Whenever we class object it return it's own copy with the values provided during the instantiation
+- Constructors are used to initializa the class peoperties/variables/fields
+
+
+- Whenever we create class object, it's constructor is called
+ - 2 types of constructors are there	
+	1. Non-parametrize
+		- Default constructor that every class has, weather it is defined or not
+		- Has no parameters, will be called automatically when a class is instanstiated
+	2. Parametrize
+		- Has parameters and initializes the class variables/fields with the values passed at the time of instanstiated
+		
+class Department { // As per the convension, first letter of class should be in caps
+    name: string; // Property/field/variable, let/var/const is not required
+    constructor (n: string) { // For functions, no need to use const/let or function keywords
+        this.name = n;
+    }
+}
+
+const accounting = new Department("Accounting");
+
+console.log(accounting);
+
+
+		
+***Constructor Functions & the "this" Keyword***
+
+class Department { // As per the convension, first letter of class should be in caps
+    name: string; // Property/field/variable, let/var/const is not required
+
+    constructor (n: string) { // For constructor functions, no need to use const/let or function keywords
+        this.name = n;
+    }
+
+    describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
+        console.log("Department: " + this.name);
+    }
+}
+
+const accounting = new Department("Accounting");
+
+accounting.describe();
+
+const accountingCopy = {name: "Dummy", describe: accounting.describe};
+
+accountingCopy.describe();
+
+
+"this" refers to the thing which is responsible for calling a method
+
+
+***"private" and "public" Access modifiers***
+- public is by default
+- Introduced in TS
+
+class Department { // As per the convension, first letter of class should be in caps
+    private name: string; // Property/field/variable, let/var/const is not required
+    private employees: string[] = [];
+
+    constructor (n: string) { // For constructor functions, no need to use const/let or function keywords
+        this.name = n;
+    }
+
+    describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
+        console.log("Department: " + this.name);
+    }
+
+    addEmployee(employee: string) {
+        this.employees.push(employee);
+    }
+
+    printEmployeeInformation() {
+        console.log(this.employees.length);
+        console.log(this.employees);
+    }
+}
+
+const accounting = new Department("Accounting");
+
+accounting.describe();
+
+accounting.addEmployee("Max");
+accounting.addEmployee("Manu");
+
+// accounting.employees[2] = "Anna"; // Not recommended, hence we should make class variables private so that they can be accessible only within the class
+
+accounting.printEmployeeInformation();
+
+// const accountingCopy = {name: "Dummy", describe: accounting.describe};
+
+// accountingCopy.describe();
+
+
+***Shorthand Initialization***
+- We define which arguments the constructor takes and then for argument which has such an access modifier in front of it, a property of the same name is created and the value for the argument is stored in that created property.
+
+class Department { // As per the convension, first letter of class should be in caps
+    // private id: string;
+    // name: string; // Property/field/variable, let/var/const is not required
+    private employees: string[] = [];
+
+    constructor (private id: string, public name: string) { // For constructor functions, no need to use const/let or function keywords
+        // this.id = id;
+        // this.name = name;
+    }
+
+    describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
+        console.log(`Department ${this.id}: ${this.name}`);
+    }
+
+    addEmployee(employee: string) {
+        this.employees.push(employee);
+    }
+
+    printEmployeeInformation() {
+        console.log(this.employees.length);
+        console.log(this.employees);
+    }
+}
+
+const accounting = new Department("D1", "Accounting");
+
+accounting.describe();
+
+accounting.addEmployee("Max");
+accounting.addEmployee("Manu");
+
+// accounting.employees[2] = "Anna"; // Not recommended, hence we should make class variables private so that they can be accessible only within the class
+
+accounting.printEmployeeInformation();
+
+// const accountingCopy = {name: "Dummy", describe: accounting.describe};
+
+// accountingCopy.describe();
+
+
+***"readonly" properties***
+- Introduced in TS
+- A property if initialized cannot be changed later, TS will give the compilation error if we try to do so.
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain
+
+class Department { // As per the convension, first letter of class should be in caps
+    // private readonly id: string;
+    // name: string; // Property/field/variable, let/var/const is not required
+    private employees: string[] = [];
+
+    constructor (private readonly id: string, public name: string) { // For constructor functions, no need to use const/let or function keywords
+        // this.id = id;
+        // this.name = name;
+    }
+
+    describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
+        console.log(`Department ${this.id}: ${this.name}`);
+    }
+
+    addEmployee(employee: string) {
+        this.employees.push(employee);
+    }
+
+    printEmployeeInformation() {
+        console.log(this.employees.length);
+        console.log(this.employees);
+    }
+}
+
+const accounting = new Department("D1", "Accounting");
+
+accounting.describe();
+
+accounting.addEmployee("Max");
+accounting.addEmployee("Manu");
+
+// accounting.employees[2] = "Anna"; // Not recommended, hence we should make class variables private so that they can be accessible only within the class
+
+accounting.printEmployeeInformation();
+
+// const accountingCopy = {name: "Dummy", describe: accounting.describe};
+
+// accountingCopy.describe();
+
+
+***Inheritance***
+- We can only inherit from single class
+- The class that is inheriting the another class, will get all methods, variables including the constructor
+- So basically if we don't have a dedicated constructor inside the subclass class, and if we create the instance of the subclass class it automatically calls the constructor of the base class
+- But if subclass has a constructor then we have to call the super method inside it that will basically call the base class constructor. super() statement should be the first statement inside subclass constructor, if constructor in base class has parameters then we have to pass arguments in super method.
+
+class Department { // As per the convension, first letter of class should be in caps
+    // private readonly id: string;
+    // name: string; // Property/field/variable, let/var/const is not required
+    private employees: string[] = [];
+
+    constructor (private readonly id: string, public name: string) { // For constructor functions, no need to use const/let or function keywords
+        // this.id = id;
+        // this.name = name;
+    }
+
+    describe (this: Department) { // For constructor functions, no need to use const/let or function keywords
+        console.log(`Department ${this.id}: ${this.name}`);
+    }
+
+    addEmployee(employee: string) {
+        this.employees.push(employee);
+    }
+
+    printEmployeeInformation() {
+        console.log(this.employees.length);
+        console.log(this.employees);
+    }
+}
+
+class ITDepartment extends Department {
+    admins: string[];
+        constructor(id: string, admins: string[]) {
+        super(id, "IT");
+        this.admins = admins;
+    }
+}
+
+class AccountingDepartment extends Department {
+    constructor(id: string, private reports: string[]) {
+        super(id, "Accounting");
+    }
+
+    addReport(text: string) {
+        this.reports.push(text);
+    }
+
+    getReports() {
+        console.log(this.reports);
+    }
+}
+
+const it = new ITDepartment("d1", ['Max']);
+
+it.describe();
+
+it.addEmployee("Max");
+it.addEmployee("Manu");
+
+// it.employees[2] = "Anna"; // Not recommended, hence we should make class variables private so that they can be accessible only within the class
+
+it.printEmployeeInformation();
+
+console.log(it);
+
+const accounting = new AccountingDepartment('d2', []);
+
+accounting.addReport("Something went wrong...");
+accounting.getReports();
+
+// const itCopy = {name: "Dummy", describe: it.describe};
+
+// itCopy.describe();
+
+
+***Overriding Properties & The "protected" Modifier***
+Access Modifiers (Introduced in TS)
+- public =>  only accessible within class and all other classes
+- protected => only accessible within class and its subclasses
+- private =>  only accessible within class and its subclasses
+
+***Getters and Setters***
+- With getters and setters, private properties are accessible outside the class
+- They made accessible with extra checking written inside getters and setters
+- Hence they act as encapsulation
+- Example:
+
+private lastReport: string;
+
+    // get propery, acts as an encapsulation 
+    get mostRecentReport() {
+        if(this.lastReport) {
+            return this.lastReport;
+        }
+        throw new Error("No report found.");
+    }
+
+    set mostRecentReport(value: string) {
+        if(!value) {
+            throw new Error("Please in a valid value!");
+        }
+        this.addReport(value);
+    }
+	
+	
+	
+accounting.mostRecentReport = "Year End Report";
+console.log(accounting.mostRecentReport);
+
+
+***Static Methods and Properties***
+- Static properties and methods allow you to add properties and methods to classes which are not accessed on an instance of the class, so where you don't need to call new class name first, but which you can access directly on the class.
+- This is often used for "Utility Functions", that you want to group or map a class logically or global constants which you also wanna store in a class. Example: Math constructor function 
+- We cannot mark constructor as static
+- We cannot access static properties/methods inside of the constructor as they are detached from the instance and we have to access them via this keyword which is attached to the instance, so we can only access by ClassName.propertyName OR ClassName.methodName
+
+***Abstract Classes***
+- If atleast one method inside the class is abstract then entire class has to be abstract
+- Abstract methods can only appear within an abstract class
+- If any method wants to extend an abstract class then the sub class has to provide definition/implementation of all the abstract methods preent inside the base class
+- Abstract classes cannot be instantiated.
+- Example:
+abstract describe(this: Department): void; // No method definition. This you are allowing sub classes to implement/define this method method in their own way 
+
+Note: 
+Multiple Inheritance
+Is overloading possible in JS/TS
+
+
+***Singletons and Private Constructors***
+- The Singleton pattern is about ensuring that you always only have exactly one instance of a certain class, meaning only exactly one object based on a class.
+- To enforce this and to avoid that we manually call new instance multiple times, we can turn the constructor of the class into a "Private Constructor" by adding the private keyword in front of it, this ensures we cannot call new on this.
+- Question is, how do we get inside of the class if we can't create objects based on it anymore.
+- The answer is, "Static Methods", as a static method can be called on the class itself, so you don't have to instantiate it for that. 
+	- Function name can be anything
+	- This function will check if we already have an instance of the class and if it has then return that instance, if not, return a new one.
+	- For that we can create a new private static property instance of type class
+	
+
+
+***A First Interface***
+- Introduced newly in TS
+- Interfaces are used to define the structure of objects
+- Example
+interface Person {
+    name: string;
+    age: number;
+
+    greet(phrase: string): void;
+}
+
+let user1: Person;
+
+user1 = {
+    name: 'Max',
+    age: 30,
+    greet(phrase: string) {
+        console.log(phrase + " " + this.name);
+    }
+}
+
+user1.greet("Hi there - I'm");
+
+
+***Using INterfaces with Classes***
+- The example mentioned above can also be achieved by a custom type as mentioned below:
+type Person1 = {
+    name: string;
+    age: number;
+
+    greet(phrase: string): void;
+}
+
+let user2: Person1;
+
+user2 = {
+    name: 'Manu',
+    age: 29,
+    greet(phrase: string) {
+        console.log(phrase + " " + this.name);
+    }
+}
+
+user2.greet("Hi there - I'm");
+
+Q. Why we need interfaces?
+
+
+
+***Readonly Interface Properties***
+interface Greetable {
+    readonly name: string;
+
+    greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+    name: string;
+    age = 30;
+
+    constructor(name: string) {
+        this.name = name;
+    }
+
+    greet(phrase: string) {
+        console.log(phrase + ' ' + this.name);
+    }
+}
+
+let user: Greetable;
+
+user = new Person("Max");
+// user.name = "Manu"; // not possible as it is readonly
+
+user.greet("Hi there - I'm");
+
+
+
+***Extending Interfaces***
+- An interface can extend one or more interfaces
+- A class can extend only one class
+- A class can implements multiple interfaces
+
+
+***Interfaces as Function Types***
+type AddFn = (a: number, b: number) => number;
+
+let addNumbers: AddFn;
+
+addNumbers = (n1: number, n2: number) => {
+    return n1 + n2;
+};
+
+
+to 
+
+
+// Interface as a function type
+interface AddFn {
+    (a: number, b: number) : number;
+}
+
+let addNumbers: AddFn;
+
+addNumbers = (n1: number, n2: number) => {
+    return n1 + n2;
+};
+	
+
+
+***Optional Parameters and Properties***
+interface Named {
+	readonly name: string;
+	outputName?: string;
+	
+	greet?(phrase: string): void;
+}
+
+class Person {
+	age?: number;
+
+	constructor(age?: number) {  // constructor(age: number = 0)
+		this.age = age;
+	}
+}
+
+Interfaces are not compiled into JS
+
+
+
+15/04/2024
+6. Advanced Types
+
+***Intersection Types***
+- Intersection type allow us to combine other types
+- Example 
+
+type Admin = {
+    name: string;
+    privileges: string[];
+}
+
+type Employee = {
+    name: string;
+    startDate: Date;
+}
+
+type ElevatedEmployee = Admin & Employee;
+
+const e1: ElevatedEmployee = {
+    name: 'Max',
+    privileges: ['create-server'],
+    startDate: new Date()
+}
+
+console.log(e1);
+
+- Above thing can also be achieved by interfaces, mentioned below
+
+// type Admin = {
+//     name: string;
+//     privileges: string[];
+// }
+
+interface Admin {
+    name: string;
+    privileges: string[];
+}
+
+// type Employee = {
+//     name: string;
+//     startDate: Date;
+// }
+
+interface Employee {
+    name: string;
+    startDate: Date;
+}
+
+// type ElevatedEmployee = Admin & Employee;
+
+interface ElevatedEmployee extends Admin, Employee {};
+
+const e1: ElevatedEmployee = {
+    name: 'Max',
+    privileges: ['create-server'],
+    startDate: new Date()
+}
+
+console.log(e1);
+
+- Example
+type Combine = string | number;
+type Numeric = number | boolean;
+
+type Universal = Combine & Numeric; // Universal type would be number as intersection between Combine and Numeric is number
+
+- In case of objects, combinations of properties
+
+
+***More on Type Guards***
+- Example
+type combined = string | number;
+
+function addTwoNums(a: combined, b: combined) {
+    if(typeof a === "string" || typeof b === "string") { // Here typeof is one kind of Guard here
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+
+- Example 
+type combined = string | number;
+
+function addTwoNums(a: combined, b: combined) {
+    if(typeof a === "string" || typeof b === "string") { // Here typeof is one kind of Guard here
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+
+type Admin1 = {
+    name: string;
+    privileges: string[];
+}
+
+type Employee1 = {
+    name: string;
+    startDate: Date;
+}
+
+type UnknownEmployee = Admin1 | Employee1;
+
+const e2: UnknownEmployee = {
+    name: 'Vikas',
+    privileges: ['create-server'],
+    startDate: new Date()
+}
+
+function printEmployeeInfo(emp: UnknownEmployee) {
+    console.log('Name: ' + emp.name);
+
+    // if(emp.privileges) { // TS will not compile
+    if('privileges' in emp) { // Different syntax in JS is property exists in object 
+        // type guard
+        console.log('Privileges: ' + emp.privileges);
+    }
+
+    if('startDate' in emp) { // Different syntax in JS is property exists in object
+         // type guard
+        console.log('Start Date: ' + emp.startDate);
+    }
+}
+
+printEmployeeInfo(e2);
+printEmployeeInfo({name: "Max", startDate: new Date()});
+
+- With Classes, Example
+type combined = string | number;
+
+function addTwoNums(a: combined, b: combined) {
+    if(typeof a === "string" || typeof b === "string") { // Here typeof is one kind of Guard here
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+
+type Admin1 = {
+    name: string;
+    privileges: string[];
+}
+
+type Employee1 = {
+    name: string;
+    startDate: Date;
+}
+
+type UnknownEmployee = Admin1 | Employee1;
+
+const e2: UnknownEmployee = {
+    name: 'Vikas',
+    privileges: ['create-server'],
+    startDate: new Date()
+}
+
+function printEmployeeInfo(emp: UnknownEmployee) {
+    console.log('Name: ' + emp.name);
+
+    // if(emp.privileges) { // TS will not compile
+    if('privileges' in emp) { // Different syntax in JS is property exists in object 
+        // type guard
+        console.log('Privileges: ' + emp.privileges);
+    }
+
+    if('startDate' in emp) { // Different syntax in JS is property exists in object
+         // type guard
+        console.log('Start Date: ' + emp.startDate);
+    }
+}
+
+printEmployeeInfo(e2);
+printEmployeeInfo({name: "Max", startDate: new Date()});
+
+
+
+// Classes 
+
+class Car {
+    drive() {
+        console.log('Driving a car...');
+    }
+}
+
+class Truck {
+    drive() {
+        console.log('Driving a truck...');
+    }
+
+    loadCargo(amount: number) {
+        console.log('Loading cargo... ' + amount);
+    }
+}
+
+type Vehicle = Car | Truck;
+
+const v1 = new Car();
+const v2 = new Truck();
+
+function useVehicle (vehicle: Vehicle) {
+    vehicle.drive();
+    // if('loadCargo' in vehicle) { // Not recommended as we can mistype here
+    if(vehicle instanceof Truck) { // Available in vanila JS 
+        vehicle.loadCargo(1000);
+    }
+}
+
+useVehicle(v1); 
+//Driving a car...
+
+useVehicle(v2); 
+// Driving a truck...
+// type-guards.ts:62 Loading cargo... 1000
+
+
+- Type Guards is just a term that describes the idea or approach of checking if a certain property or method exists before you try to use it.
+	- For objects it can be done with "instanceof"
+	- For other types you can you, "typeof"
+	
+	
+	
+***Discriminated Unions***
+- It's a pattern, which you can use when working with union types that makes implementing type guards easier. It is available when you work with object types.
+
+interface Bird {
+    type: 'bird'; // discriminator name can be anything, we have give type here
+    flyingSpeed: number;
+}
+
+interface Horse {
+    type: 'horse';
+    runningSpeed: number;
+}
+
+type Animal = Bird | Horse;
+
+function moveAnimal(animal: Animal) {
+    // If we do like below and if we have many animal then we've do for all the types
+    // if('flyingSpeed' in animal) {
+    //     console.log("Moving with speed: " + animal.runningSpeed);
+    // }
+
+    // Cannot use instanceof as Interfaces cannot be instantaited
+
+    // So here comes the discriminated unions, we can add discriminator on each interface
+
+    let speed;
+    switch(animal.type) {
+        case 'bird':
+            speed = animal.flyingSpeed;
+            break;
+        case 'horse':
+            speed = animal.runningSpeed;
+    }
+    console.log("Moving with speed: " + speed);
+}
+
+moveAnimal({type: 'bird', flyingSpeed: 10});
+
+- In above example, we have one common property that we can used to describe that object
+
+
+***Type Casting***
+// const userInputElement = <HTMLInputElement>document.getElementById('user-input')!; // <HTMLInputElement> is type casting
+
+const userInputElement = document.getElementById('user-input')! as HTMLInputElement; // as HTMLInputElement is type casting
+// "!" is added a we know this statement will never return null, if we are not sure then add an if check
+
+userInputElement.value = "Hi there!";
+
+
+// // If not sure if the value is null then...
+
+// const userInputElement1 = document.getElementById('user-input');
+
+// if(userInputElement1) {
+//     (userInputElement as HTMLInputElement).value = "Hi there!";
+// }
+
+
+***Index Properties***
+- Index Properties are used...
+	- Can be used when which property names we want to use and how many properties we need
+- Example
+	interface ErrorContainer {
+    // For the example purpose, we are validating fields present in the form, but we don't the fields and how many fields are present, like prop: value can be email: 'Not a valid email', username: 'Must start with a capital character and so on...'
+    [prop: string]: string;
+}
+
+const errorBag: ErrorContainer = {
+    email: "Not a valid email",
+    username: "Must start with a capital character"
+}
+
+// Index Properties are used...
+// Can be used when which property names we want to use and how many properties we need
+
+
+***Function Overloads***
+type Merged = number | string;
+
+// Below are function overloads
+function addition1(a: number, b: number): number;
+function addition1(a: string, b: string): string;
+function addition1(a: string, b: number): string;
+function addition1(a: number, b: string): string;
+function addition1(a: Merged, b: Merged) {
+    if(typeof a === 'string' || typeof b === 'string') {
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+
+const result1 = addition1('Vikas', 'Rohra');
+result1.split(' '); // Will work
+
+// const result2 = addition1(1, 2);
+// result2.split(' '); // Gives error - Property 'split' does not exist on type 'number'
+
+
+***Optional Chaining***
+console.log(fetchedUserData?.job?.title);
+
+
+***Nullish Coalescing***
+const userInput1 = undefined;
+
+// const storedData = userInput || 'Default'; // This will be false for undefined, null, '' and 0 
+const storedData = userInput ?? 'Default'; // This will be false for undefined and null
+
+console.log(storedData);
+
+
+16/04/2024
+7. Generics
+- Two types
+	- Built-in
+	- Custom
+
+***What are Generics and Built-in Generics***
+- A Generic type is a type which is kind of connected with some other type and is really flexible regarding which exact type that other type is
+- Built-in Generics examples
+
+// const names: string[] = [];
+// Above statement can be written as...
+const names: Array<string> = [];
+
+// const nam: string[] | number[] = [];
+// Above statement can be written as...
+const nam: Array<string | number> = [];
+
+const promise : Promise<string> = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        console.log(10);
+    }, 2000);
+});
+
+promise.then(data => {
+    data.split(' ');
+})
+
+
+***Creating a Generic Function***
+Scenario 1
+function merge(objA: object, objB: object) {
+    return Object.assign(objA, objB);
+}
+
+const mergedObj = merge({name: 'Vikas'}, {age: 30})
+console.log(mergedObj.name); // Property 'name' does not exist on type 'object', because TS doesn't know this, it knows to return as object but doesn't carry all the information
+
+Scenario 2
+function merge(objA: object, objB: object) {
+    return Object.assign(objA, objB);
+}
+
+// We can type cast the result but what if we have a lot of properties/ or we don't the properties
+const mergedObj = merge({name: 'Vikas'}, {age: 30}) as {name: string, age: number};
+console.log(mergedObj.name);
+
+
+
+// Function Generic
+1.
+
+//  extends object is a constraint
+function merge<T extends object, U extends object>(objA: T, objB: U) {
+    return Object.assign(objA, objB);
+}
+
+const mergedObj = merge({name: 'Vikas'}, {age: 30});
+console.log(mergedObj.name);
+console.log(mergedObj.age);
+
+// on hover over mergedObj we'll get more generic intersected object, now we can access the properties
+// const mergedObj: {
+//     name: string;
+// } & {
+//     age: number;
+// }
+
+2.
+
+// extends Lengthy is a constraint
+function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
+    let descriptionText = "Got no value.";
+    if(element.length === 1) {
+        descriptionText = "Got 1 element.";
+    }
+    else {
+        descriptionText = "Got " + element.length + " elements.";
+    }
+
+    return [element, descriptionText];
+}
+
+console.log(countAndDescribe("Hi there!")); // (2) ['Hi there!', 'Got 9 elements.']
+console.log(countAndDescribe([1, 2, 3])); // (2) [Array(3), 'Got 3 elements.']
+console.log(countAndDescribe([])); // (2) [Array(3), 'Got no value.']
+// console.log(countAndDescribe(2)); // Compile time error, Argument of type 'number' is not assignable to parameter of type 'Lengthy'
+
+Conslusion: It is a common method for strings, arrays and other types that has length property, not percific to type but a generic method for all the types that have length property
+
+
+***The "keyof" Constraint***
+// "keyof"
+function extractAndConvert<T extends object, U extends keyof T>(obj: T, key: U) {
+    return "Value: " + obj[key];
+}
+
+console.log(extractAndConvert({name: 'Vikas'}, 'name'));
+
+
+Note: 
+Generic types allows us to create flexible still perfect types support (Make functions and class Flexible with Type Safety).
+
+***Generic Classes***
+
+class DataStorage<T> {
+    private data: T[] = [];
+
+    addItem(item: T) {
+        this.data.push(item);
+    }
+
+    removeItem(item: T) {
+        if(this.data.indexOf(item) === -1) {
+            return;
+        }
+        this.data.splice(this.data.indexOf(item), 1);
+    }
+
+    getItems() {
+        return [...this.data];
+    }
+}
+
+const textStorage = new DataStorage<string>();
+// textStorage.addItem(2); // Argument of type 'number' is not assignable to parameter of type 'string'
+textStorage.addItem('Max');
+textStorage.addItem('Manu');
+textStorage.removeItem('Max');
+console.log(textStorage.getItems());
+
+const numberStorage = new DataStorage<number>();
+const mixedStorage = new DataStorage<number | string>();
+
+const objectStorage = new DataStorage<object>();
+const newObj = {name: 'Max'};
+objectStorage.addItem(newObj);
+objectStorage.addItem({name: 'Manu'});
+objectStorage.removeItem(newObj);
+console.log(objectStorage.getItems());
+// and so on...
+
+
+To allow only work for primitive types 
+
+
+class DataStorage<T extends number | string | boolean> {
+    private data: T[] = [];
+
+    addItem(item: T) {
+        this.data.push(item);
+    }
+
+    removeItem(item: T) {
+        if(this.data.indexOf(item) === -1) {
+            return;
+        }
+        this.data.splice(this.data.indexOf(item), 1);
+    }
+
+    getItems() {
+        return [...this.data];
+    }
+}
+
+const textStorage = new DataStorage<string>();
+// textStorage.addItem(2); // Argument of type 'number' is not assignable to parameter of type 'string'
+textStorage.addItem('Max');
+textStorage.addItem('Manu');
+textStorage.removeItem('Max');
+console.log(textStorage.getItems());
+
+const numberStorage = new DataStorage<number>();
+const mixedStorage = new DataStorage<number | string>();
+
+const objectStorage = new DataStorage<object>(); // This is then compile time error
+const newObj = {name: 'Max'};
+objectStorage.addItem(newObj);
+objectStorage.addItem({name: 'Manu'});
+objectStorage.removeItem(newObj);
+console.log(objectStorage.getItems());
+// and so on...
+
+
+
+
+***Generic Utility Types***
+
+https://www.typescriptlang.org/docs/handbook/utility-types.html
+
+
+interface CourseGoal {
+    title: string;
+    description: string;
+    completeUntil: Date;
+}
+
+// This will works fine
+// function createCourseGoal(title: string, description: string, completeUntil: Date): CourseGoal {
+//     return {title: title, description: description, completeUntil: completeUntil};
+// }
+
+// But what if we want to assign the properties individually, then it fails because we have first created empty object that doesn't have properties
+// function createCourseGoal(title: string, description: string, completeUntil: Date): CourseGoal {
+//     let courseGoal = {};
+//     courseGoal.title = title;
+//     courseGoal.description = description;
+//     courseGoal.completeUntil = completeUntil;
+
+//     return courseGoal as CourseGoal;
+// }
+
+
+// Now we can make the create the type of courseGoal as CourseGoal, but then too it will not work, because initially it is {} and hence Partial Types comes into picture 
+// Type '{}' is missing the following properties from type 'CourseGoal': title, description, completeUntilts
+// function createCourseGoal(title: string, description: string, completeUntil: Date): CourseGoal {
+//     let courseGoal: CourseGoal = {};
+//     courseGoal.title = title;
+//     courseGoal.description = description;
+//     courseGoal.completeUntil = completeUntil;
+
+//     return courseGoal as CourseGoal;
+// }
+
+
+// Partial Types
+// It makes all the properties optional only temporarily
+function createCourseGoal(title: string, description: string, completeUntil: Date): CourseGoal {
+    let courseGoal: Partial<CourseGoal> = {};
+    courseGoal.title = title;
+    courseGoal.description = description;
+    courseGoal.completeUntil = completeUntil;
+
+    return courseGoal as CourseGoal;
+}
+
+
+// Readonly Generic
+const names1: Readonly<string[]> = ['Max', 'Anna'];
+// names1.push('Manu'); // Property 'push' does not exist on type 'readonly string[]'
+// names1.pop(); // Property 'pop' does not exist on type 'readonly string[]'
+
+
+
+***Generic Types VS Union Types***
+- Union is like an array can have combination of number, string and boolean elements.
+- Generic is like an array can have either all elements of number type or all elements of string type or all elements of boolean type, one at a time.
+- Union types can be great if you want to have a function which you can call with one of these types every time you call it, flexible to have a different type with every method call, with every function call. If we have a class with 2 different methods, that modifies the same class variable, with one function we can modify to add a string, with other we can modify it to add a number.
+- Generic types can be great if you want to lock in a certain type, use same type throughout the entire class instance you create, use the same type throughout the entire function. If we have a class with 2 different methods, that modifies the same class variable, we have pass same type in both the methods to modify the variable with common type.
+
+
+
+16-04-2024
+8. Decorators
+
+***A First Class Decorator***
+- Uncomment line in tsconfig.json - "experimentalDecorators": true, /* Enable experimental support for legacy experimental decorators. */
+- Decorators execute when your class is defined, not when it is instantaited
+- Example
+// Decorator function, function name starts with capital letter, just for the convension
+function Logger(constructor: Function) {
+    console.log('Logging...');
+    console.log(constructor);
+}
+
+@Logger
+class NewPerson {
+    name = 'Vikas';
+
+    constructor() {
+        console.log('Creating person object...');
+    }
+}
+
+const person = new NewPerson();
+
+console.log(person);
+
+
+
+***Working with Decorator Factories***
+// Factory function that returns decorator function
+function Logger(logString: string) {    
+    return function(constructor: Function) { // annonimous decorator function
+        console.log(logString);
+        console.log(constructor);
+    }
+}
+
+@Logger('Logging - Person') // Here now we have to call the factory function
+class NewPerson {
+    name = 'Vikas';
+
+    constructor() {
+        console.log('Creating person object...');
+    }
+}
+
+const person = new NewPerson();
+
+console.log(person);
+
+
+***Building More Useful Decorators***
+function WithTemplate(template: string, hoodId: string) {
+    // return function(_: Function) { // Not interested in the constructor and to tell TypeScript that I'm not interested here, I can add an underscore as a name, which basically signals the TS, "Yeah I know I get this argument, but I don't need it"
+
+    return function(constructor: any) {
+        const hookEle = document.getElementById(hoodId);
+        const p = new constructor();
+        if(hookEle) {
+            hookEle.innerHTML = template;
+            hookEle.querySelector('h1')!.textContent = p.name;
+        }
+
+    }
+}
+
+// @Logger('Logging - Person') // Here now we have to call the factory function
+@WithTemplate('<h1>My Person Object</h1>', 'app')
+class NewPerson {
+    name = 'Vikas';
+
+    constructor() {
+        console.log('Creating person object...');
+    }
+}
+
+const person = new NewPerson();
+
+console.log(person);
+
+
+
+***Adding Multiple Decorators***
+- Calling Sequence
+1) Factory function of first decorator in seq
+2) Factory function of second decorator in seq
+3) Decorator function of second decorator in seq
+4) Decorator function of first decorator in seq
+
+
+// Factory function that returns decorator function
+function Logger(logString: string) {
+    console.log('Logger Factory');    
+    return function(constructor: Function) {
+        console.log(logString);
+        console.log(constructor);
+    }
+}
+
+function WithTemplate(template: string, hoodId: string) {
+    // return function(_: Function) { // Not interested in the constructor and to tell TypeScript that I'm not interested here, I can add an underscore as a name, which basically signals the TS, "Yeah I know I get this argument, but I don't need it"
+    console.log('Template Factory');
+    return function(constructor: any) {
+        console.log('Template Decorator');
+        const hookEle = document.getElementById(hoodId);
+        const p = new constructor();
+        if(hookEle) {
+            hookEle.innerHTML = template;
+            hookEle.querySelector('h1')!.textContent = p.name;
+        }
+
+    }
+}
+
+@Logger('Logging - Person') // Here now we have to call the factory function
+@WithTemplate('<h1>My Person Object</h1>', 'app')
+class NewPerson {
+    name = 'Vikas';
+
+    constructor() {
+        console.log('Creating person object...');
+    }
+}
+
+const person = new NewPerson();
+
+console.log(person);
+
+
+***Diving into Property Decorators***
+- If we want to create a decorator for a class then decorator function will always constructor function as the parameter
+- If we want to create a decorator for a property then it will have 2 parameters - target of any type and propertyName of string | Symbol type
+- Example
+function Log(target: any, propertyName: string | Symbol) {
+    console.log('Property decorator!');
+    console.log(target, propertyName);
+}
+
+class Product {
+    @Log
+    title: string;
+    private _price: number;
+
+    set price(val: number) {
+        if(val > 0) {
+            this._price = val;
+        } else {
+            throw new Error('Invalid price - should be positive!')
+        }
+    }
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this._price = p;
+    }
+
+    getPriceWithTax(tax: number) {
+        return this._price * (1 + tax);
+    }
+}
+
+
+***Accessor and Parameter Decorators***
+
+// Variable Decorator
+function Log(target: any, propertyName: string | Symbol) {
+    console.log('Property decorator!');
+    console.log(target, propertyName);
+}
+
+// Property/Accessor Decorator
+function Log2(target: any, name: string, descriptor: PropertyDescriptor){
+    console.log('Accessor decorator!');
+    console.log(target);
+    console.log(name);
+    console.log(descriptor);
+}
+
+// Method Decorator
+function Log3(target: any, name: string |Symbol, descriptor: PropertyDescriptor){
+    console.log('Method decorator!');
+    console.log(target);
+    console.log(name);
+    console.log(descriptor);
+}
+
+// Method Parameter Decorator
+function Log4(target: any, name: string |Symbol, position: number) {
+    console.log('Parameter decorator!');
+    console.log(target);
+    console.log(name);
+    console.log(position); // Index of the argument
+}
+
+class Product {
+    @Log
+    title: string;
+    private _price: number;
+
+    @Log2
+    set price(val: number) {
+        if(val > 0) {
+            this._price = val;
+        } else {
+            throw new Error('Invalid price - should be positive!')
+        }
+    }
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this._price = p;
+    }
+
+    @Log3
+    getPriceWithTax(@Log4 tax: number) {
+        return this._price * (1 + tax);
+    }
+}
+
+
+***When do decorators execute***
+- All the decorators execute when the class is defined
+
+
+***Returning (and Changing) a Class in a Class Decorator***
+- Basically idea behind is we want to execute the decorator only after the class is instantiated and replacing the class with this custom class
+
+function WithTemplate1(template: string, hoodId: string) {
+    console.log('Template Factory');
+    return function<T extends {new(...args: any[]): {name: string}}>(originalConstructor: T) {        
+        return class extends originalConstructor {
+            constructor(..._: any[]) {
+                super();
+
+                console.log('Rendering Decorator');
+                const hookEle = document.getElementById(hoodId);
+                if(hookEle) {
+                    hookEle.innerHTML = template;
+                    hookEle.querySelector('h1')!.textContent = this.name;
+                }
+            }
+        }
+    };
+}
+
+@WithTemplate1('<h1>My Person Object</h1>', 'app')
+class NewPerson1 {
+    name = 'Vikas';
+
+    constructor() {
+        console.log('Creating person object...');
+    }
+}
+
+const person1 = new NewPerson1();
+
+console.log(person1);
+
+
+***Other Decorator Return Types***
+- We can also return fron decorators added to methods and to accessors
+- Return values from properties and parameter decorators are not accepted by TS
+- Property Descriptor (We can more properties to the object) - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+
+
+***Example: Creating an "Autobind"***
+- We can return something on Method Decorators and something should be a descriptor which allows us to change the method or change the configuration of the method.
+- Example 
+function AutoBind(target: any, methodName: string, descriptor: PropertyDescriptor) {
+    // console.log(descriptor);
+    const originalMethod = descriptor.value;
+    const adjDescriptor: PropertyDescriptor = {
+        configurable: true,
+        enumerable: false,
+        get() {
+            const boundFn = originalMethod.bind(this);
+            return boundFn;
+        }
+        // get: function() {
+        //     const boundFn = originalMethod.bind(this);
+        //     return boundFn;
+        // }
+    };
+    return adjDescriptor; 
+}
+
+class Printer {
+    message = 'This works!';
+
+    @AutoBind
+    showMessage() {
+        console.log(this.message);
+    }
+}
+
+const p = new Printer();
+
+const button = document.querySelector('button')!;
+button.addEventListener('click', p.showMessage); // Output: undefined, because here this refers to the thing that is responsible for calling the function, in this case it is button
+
+//Workaround
+// button.addEventListener('click', p.showMessage.bind(p));
+
+// Now we will build a decorator, which we can add to this method, which will automatically bind "this" to the surrounding class, so to the object this method belongs to, every time it's called, no matter where we call it.
+button.addEventListener('click', p.showMessage);
+
+
+***Validation with Decorators***
+interface ValidatorConfig {
+    [property: string]: {
+        [validatableProperty: string]: string[] // ['required', 'positive']
+    }
+}
+
+const registeredValidators : ValidatorConfig = {}
+
+function Required(target: any, propName: string) {
+    registeredValidators[target.constructor.name] = {
+        ...registeredValidators[target.constructor.name],
+        [propName]: [...(registeredValidators[target.constructor.name]?.[propName] ?? []), 'required']
+    }
+}
+
+function PositiveNumber(target: any, propName: string) {
+    registeredValidators[target.constructor.name] = {
+        ...registeredValidators[target.constructor.name],
+        [propName]: [...(registeredValidators[target.constructor.name]?.[propName] ?? []), 'positive']
+    }
+}
+
+function validate(obj: any) {
+    const objValidatorConfig = registeredValidators[obj.constructor.name];
+    if(!objValidatorConfig) {
+        return true;
+    }
+    let isValid = true;
+    for(const prop in objValidatorConfig) {
+        for(const validator of objValidatorConfig[prop]) {
+            switch(validator) {
+                case 'required':
+                    isValid = isValid && !!obj[prop];
+                    break;
+                case 'positive': 
+                    isValid = isValid && obj[prop] > 0;
+                    break;
+            }
+        }
+    }
+    return isValid;
+}
+
+class Course {
+    @Required
+    title: string;
+    @PositiveNumber
+    price: number;
+
+    constructor(title: string, price: number) {
+        this.title = title;
+        this.price = price;
+    }
+}
+
+const courseForm = document.querySelector('form');
+courseForm?.addEventListener('submit', event => {
+    event.preventDefault();
+    const titleEl = document.getElementById('title') as HTMLInputElement;
+    const priceEl = document.getElementById('price') as HTMLInputElement;
+
+    const title = titleEl.value;
+    const price = +priceEl.value;
+
+    const createdCourse = new Course(title, price);
+
+    if(!validate(createdCourse)) {
+        alert('Invalid input, please try again!');
+        return;
+    }
+
+    console.log(createdCourse);
+});
+
+
+Note: If we don't want to use the parameter then we can add _ and if we have multiple such paramereter then we do somthing like this, _, _1, _2 and so on...., because TS will throw an error that these params are not used hence _ is required to tell the TS that we don't want to use them
+    dragEndHandler(_: DragEvent) {
+        
+    }
+
+https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
+
+
+17-04-2024
+9. Practice Time! Let's build a Drag & Drop Project
+
+
+18-04-2024
+9. Practice Time! Let's build a Drag & Drop Project
+
+
+19-04-2024
+9. Practice Time! Let's build a Drag & Drop Project
+
+
+20-04-2024
+XXXXXX
+
+
+21-04-2024
+9. Practice Time! Let's build a Drag & Drop Project
+
+
+21-04-2024
+10. Modules and Namespaces
+
+***Splitting code into multiple files***
+2 ways
+1. Namespaces & File Bundling
+	- Use "namespace" code syntax to group code
+	- Per-file or bundled compilation is possible (less imports to manage)
+
+2. ES6 Imports/ Exports
+	- Use ES6 import/ export syntax
+	- Pre-file compilation but single <script> import
+	- Bundling via third-party tools (eg. Webpack) is possible!
+	
+	
+	
+***Understanding various Import and Export Syntaxes***
+Named and Default => Check Lecture Video
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
+
+
+***How does code in modules execute?***
+- It execute only once, for other files that are using import statement for that file it will not execute again
+	
+
+22-04-2024	
+11. Using Webpack with TypeScript
+
+
+***What is Webpack and why do we need it?***
+- imports/exports in the last lecture will devide the application into multiple files but it creates the problem when it compiles the application, it creates multiples files after compilation so that's an issue, by this when our app loads on the browser it sends http request for each compiled file that may slow down the app as every http request takes a little time to download the files.
+- So, Webpack is the solution to reduce that amount of http requests, that would be amazing.
+
+
+***What is Webpack***
+- Webpack is "Bundling Tool"
+- Normal Setup
+	- Multiple .ts files & imports (http requests)
+	- Unoptimized code (not as small as possible)
+	- "External" development server needed
+- With Webpack
+	- Can bundles, less imports required
+	- Optimized (minified) code, less code to download
+	- More build steps can be added easily
+	
+***Installing Webpack & Important Dependencies***
+npm install --save-dev webpack webpack-cli webpack-dev-server typescript ts-loader
+
+***Adding a Production Workflow***
+npm install --save-dev clean-webpack-plugin
+
+https://webpack.js.org/
+
+
+
+22-04-2024	
+12. 3rd Party Libraries & TypScript
+
+***Module Introduction***
+1. Normal Libraries
+2. TypeScript-specific Libraries
+
+***Using JavaScript (!) Libraries with TypeScript***
+- npm i --save lodash
+- If we have installed a library written in JS (not compiled from TS) (eg lodash) then we need to install it's types package as below:
+- npm install --save-dev @types/lodash
+- types package is available for popupar JS packages not for all the packages
+- What to do if types package is not available?
+
+***No Types Needed: class-transformer***
+- We have a class on the frontend, has title, price and getInfo function
+- We recieve an array of object from the API (each object has title and price)
+- On these array objects, if we have want to call getInfo method then first we need to manually transform it to class object by instantiating the class for each object in the array
+- class-transformer can helps in automating this transformation
+	- npm install class-transformer --save
+	- npm install reflect-metadata --save
+	- import "reflect-metadata" in the root file
+	
+***TypScript-embracing: class-validator***
+- npm install class-validator --save
+
+
+
+23-04-2024	
+13. Time to Practice! Let's build a "Select & Share a Place" (Incl. Google Maps)
+
+https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURI(enteredAddress)}&key=${GOOGLE_API_KEY}
+encodeURI => This is in above line will make url compatible string
+
+// google was added by the script that we have added in index.html file, but TS doesn't knows about it, we need ti explicitly tell TS that there is something google added we know it, please ignore and don't raise an error for it
+declare var google: any;
+
+npm install --save axios
+=> types package comes with it we don't need to install separately
+
+npm install --save-dev @types/googlemaps => Google maps types api
+This package will help in 
+1. giving runtime errors 
+2. no need to write declare var google: any;
+3. Gives auto suggestions
+
+
+24-04-2024
+14. React.js & TypeScript
+
+npx create-react-app my-app --template typescript
+OD
+npx create-react-app . --template typescript => This will not create the folder instead it generate files inside the directory selected to execute this command
+
+OR 
+
+npm install -g create-react-app => install create react app globally
+AND
+create-react-app my-app --template typescript
+OR
+create-react-app . --template typescript
+
+
+Correct way of changing the state in React if prev state is needed to update
+      setTodos(prevState => [...prevState, {id: Math.random().toString(), text: text}]);
+
+
+npm install --save react-router-dom
+npm install --save-dev @types/react-router-dom
